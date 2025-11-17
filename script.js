@@ -35,6 +35,7 @@ const resumeBtn = document.getElementById("resumeBtn");
 const menuBtn = document.getElementById("menuBtn");
 
 const scoreList = document.getElementById("scoreList");
+const clearScoresBtn = document.getElementById("clearScoresBtn");
 
 // ============================
 // EVENTOS
@@ -45,6 +46,7 @@ backToMenu.onclick = goToMenu;
 pauseBtn.onclick = pauseGame;
 resumeBtn.onclick = resumeGame;
 menuBtn.onclick = goToMenu;
+clearScoresBtn.onclick = clearScores;
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowUp") direction = "up";
@@ -54,7 +56,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ============================
-// MENÚS
+// FUNCIONES DE MENÚS
 // ============================
 function goToMenu() {
     gameRunning = false;
@@ -63,13 +65,11 @@ function goToMenu() {
     scoresMenu.classList.add("hidden");
     gameContainer.classList.add("hidden");
 }
-const clearScoresBtn = document.getElementById("clearScoresBtn");
-clearScoresBtn.onclick = clearScores;
 
 function clearScores() {
     if (confirm("¿Seguro que deseas borrar todos los puntajes?")) {
-        localStorage.removeItem("pigScores"); // Borra los puntajes
-        scoreList.innerHTML = ""; // Limpia la lista en pantalla
+        localStorage.removeItem("pigScores");
+        scoreList.innerHTML = "";
         alert("Todos los puntajes han sido borrados.");
     }
 }
@@ -81,14 +81,10 @@ function showScores() {
     scoreList.innerHTML = "";
     let scores = JSON.parse(localStorage.getItem("pigScores") || "[]");
 
-    // Ordenar de mayor a menor
     scores.sort((a, b) => b.points - a.points);
 
-    // Mostrar top 10
     scores.slice(0, 10).forEach((s, index) => {
         const li = document.createElement("li");
-
-        // Corregimos undefined usando valores por defecto
         const name = s.name || "Jugador";
         const points = s.points || 0;
         const level = s.level || 1;
@@ -98,17 +94,15 @@ function showScores() {
     });
 }
 
-
-
 // ============================
 // HUD
 // ============================
 function updateHUD() {
     document.getElementById("levelDisplay").textContent = "Nivel: " + currentLevel;
+    document.getElementById("coinsDisplay").textContent = "Monedas restantes: " + coins.length;
 
     const livesContainer = document.getElementById("heartsContainer");
     livesContainer.innerHTML = "";
-
     for (let i = 0; i < lives; i++) {
         const heart = document.createElement("span");
         heart.textContent = "❤️";
@@ -129,7 +123,6 @@ function startGame() {
     resetGame();
     gameRunning = true;
 
-    // Reproducir música
     bgMusic.play().catch(e => console.log("Música no se pudo reproducir automáticamente"));
 
     gameLoop();
@@ -171,23 +164,16 @@ function loadLevel(level) {
                 size: 20
             };
 
-            // Verificar que no choque con monedas existentes
-            validPosition = !coins.some(c => 
-                Math.abs(c.x - coin.x) < coin.size && Math.abs(c.y - coin.y) < coin.size
-            );
-
-            // Opcional: también puedes verificar que no choque con el cerdito
-            validPosition = validPosition &&
-                            !(Math.abs(pig.x - coin.x) < coin.size && Math.abs(pig.y - coin.y) < coin.size);
+            validPosition = !coins.some(c => rectsCollide(c, coin));
+            validPosition = validPosition && !rectsCollide(pig, coin);
         }
 
         coins.push(coin);
     }
- // Aumentar dificultad
+
     enemy.speed = 2 + (level - 1) * 0.4;
     pig.speed = 4 + (level - 1) * 0.2;
 
-    // Paredes
     let wallCount = 5 + level;
     for (let i = 0; i < wallCount; i++) {
         walls.push({
@@ -201,10 +187,12 @@ function loadLevel(level) {
     updateHUD();
 }
 
-// Música de fondo
+// ============================
+// MÚSICA DE FONDO
+// ============================
 const bgMusic = new Audio('sounds/bgm.mp3');
-bgMusic.loop = true;  // Se repetirá infinitamente
-bgMusic.volume = 0.3; // Ajusta el volumen (0 a 1)
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
 
 // ============================
 // GAME LOOP
@@ -213,7 +201,6 @@ function gameLoop() {
     if (!gameRunning) return;
     if (!paused) updateGame();
     drawGame();
-
     requestAnimationFrame(gameLoop);
 }
 
@@ -232,7 +219,7 @@ function updateGame() {
 }
 
 // ============================
-// MOVIMIENTO DEL CERDO
+// MOVIMIENTO CERDO
 // ============================
 function movePig() {
     let ox = pig.x;
@@ -253,44 +240,84 @@ function movePig() {
 }
 
 // ============================
-// MOVIMIENTO ENEMIGO
+// MOVIMIENTO ENEMIGO (PATHFINDING SENCILLO)
 // ============================
 function moveEnemy() {
     let ox = enemy.x;
     let oy = enemy.y;
 
-    if (enemy.x < pig.x) enemy.x += enemy.speed;
-    if (enemy.x > pig.x) enemy.x -= enemy.speed;
-    if (enemy.y < pig.y) enemy.y += enemy.speed;
-    if (enemy.y > pig.y) enemy.y -= enemy.speed;
+    let dx = pig.x - enemy.x;
+    let dy = pig.y - enemy.y;
 
-    if (checkWallCollision(enemy)) {
-        enemy.x = ox;
-        enemy.y = oy;
+    let moved = false;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        enemy.x += dx > 0 ? enemy.speed : -enemy.speed;
+        if (!checkWallCollision(enemy)) moved = true;
+        else enemy.x = ox;
+
+        if (!moved) {
+            enemy.y += dy > 0 ? enemy.speed : -enemy.speed;
+            if (!checkWallCollision(enemy)) moved = true;
+            else enemy.y = oy;
+        }
+    } else {
+        enemy.y += dy > 0 ? enemy.speed : -enemy.speed;
+        if (!checkWallCollision(enemy)) moved = true;
+        else enemy.y = oy;
+
+        if (!moved) {
+            enemy.x += dx > 0 ? enemy.speed : -enemy.speed;
+            if (!checkWallCollision(enemy)) moved = true;
+            else enemy.x = ox;
+        }
+    }
+
+    if (!moved) {
+        let directions = [
+            {x: enemy.x + enemy.speed, y: enemy.y},
+            {x: enemy.x - enemy.speed, y: enemy.y},
+            {x: enemy.x, y: enemy.y + enemy.speed},
+            {x: enemy.x, y: enemy.y - enemy.speed}
+        ];
+
+        for (let d of directions) {
+            let prevX = enemy.x;
+            let prevY = enemy.y;
+            enemy.x = d.x;
+            enemy.y = d.y;
+            if (!checkWallCollision(enemy)) break;
+            enemy.x = prevX;
+            enemy.y = prevY;
+        }
     }
 }
 
 // ============================
 // COLISIONES
 // ============================
+function rectsCollide(a, b) {
+    return a.x < b.x + b.size &&
+           a.x + a.size > b.x &&
+           a.y < b.y + b.size &&
+           a.y + a.size > b.y;
+}
+
 function checkCoinCollision() {
     coins = coins.filter(coin => {
-        if (Math.abs(pig.x - coin.x) < 20 && Math.abs(pig.y - coin.y) < 20) {
+        if (rectsCollide(pig, coin)) {
             score++;
-            coinSound.currentTime = 0; // reinicia el sonido si se repite rápido
+            coinSound.currentTime = 0;
             coinSound.play();
+            updateHUD();
             return false;
         }
         return true;
     });
 }
 
-
-
 function checkEnemyCollision() {
-    if (Math.abs(pig.x - enemy.x) < 20 && Math.abs(pig.y - enemy.y) < 20) {
-
-        // Reproducir sonido
+    if (rectsCollide(pig, enemy)) {
         const hitSound = new Audio('sounds/hit.wav');
         hitSound.play();
 
@@ -314,7 +341,6 @@ function checkEnemyCollision() {
     }
 }
 
-
 function checkWallCollision(obj) {
     for (let w of walls) {
         if (
@@ -322,9 +348,7 @@ function checkWallCollision(obj) {
             obj.x + obj.size > w.x &&
             obj.y < w.y + w.height &&
             obj.y + obj.size > w.y
-        ) {
-            return true;
-        }
+        ) return true;
     }
     return false;
 }
@@ -338,24 +362,19 @@ function saveScore() {
     let name = prompt("Ingresa tu nombre:");
     if (!name) name = "Jugador";
 
-    // Guardamos puntos y nivel
     const newScore = { name, points: score, level: currentLevel };
     scores.push(newScore);
 
-    // Ordenar de mayor a menor
     scores.sort((a, b) => b.points - a.points);
 
-    // Comprobar si es un nuevo récord
     let isNewRecord = scores[0] === newScore;
 
     localStorage.setItem("pigScores", JSON.stringify(scores));
 
-    // Mostrar mensaje si hay nuevo récord
     if (isNewRecord) {
         alert("¡NUEVO RECORD! " + score + " puntos");
     }
 }
-
 
 // ============================
 // DIBUJAR TODO
@@ -363,19 +382,15 @@ function saveScore() {
 function drawGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Cerdo
     ctx.fillStyle = "pink";
     ctx.fillRect(pig.x, pig.y, pig.size, pig.size);
 
-    // Enemigo
     ctx.fillStyle = "red";
     ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size);
 
-    // Monedas
     ctx.fillStyle = "yellow";
     coins.forEach(c => ctx.fillRect(c.x, c.y, c.size, c.size));
 
-    // Paredes
     ctx.fillStyle = "#9344bdff";
     walls.forEach(w => ctx.fillRect(w.x, w.y, w.width, w.height));
 }
@@ -387,26 +402,24 @@ function pauseGame() {
     paused = true;
     pauseBtn.classList.add("hidden");
     resumeBtn.classList.remove("hidden");
-    bgMusic.pause(); // Pausar música
+    bgMusic.pause();
 }
-
 
 function resumeGame() {
     paused = false;
     resumeBtn.classList.add("hidden");
     pauseBtn.classList.remove("hidden");
-    bgMusic.play(); // Reanudar música
+    bgMusic.play();
 }
 
 // ============================
-// PANTALLA DE TRANSICIÓN
+// TRANSICIÓN DE NIVELES
 // ============================
 function showLevelTransition() {
     const transition = document.getElementById("levelTransition");
     const text = document.getElementById("transitionText");
 
     text.textContent = "Nivel " + currentLevel;
-
     transition.classList.remove("hidden");
 
     setTimeout(() => {
