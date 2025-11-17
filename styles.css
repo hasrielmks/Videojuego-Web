@@ -70,7 +70,7 @@ body::after {
 }
 
 /* ============================
-   BOTONES DEL MENÚ (REDIMENSIONADOS)
+   BOTONES DEL MENÚ 
 ============================ */
 #menu button {
     padding: 12px 25px;
@@ -335,20 +335,9 @@ button:active {
         width: 45%;
     }
     
-    /* Ajuste de botones del menú en móviles */
-    #menu button {
-        min-width: 180px;
-        max-width: 250px;
-    }
-    
-    /* Ajuste para botones de puntuaciones en móviles */
-    #scoresButtons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
     #scoresButtons button {
         width: 100%;
         max-width: 250px;
     }
 }
+
