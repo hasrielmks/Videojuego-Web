@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>PIG DASH</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- MENÚ PRINCIPAL -->
+    <div id="menu">
+        <h1>PIG DASH</h1>
+        <button id="startBtn">Iniciar Juego</button>
+        <button id="scoresBtn">Mejores Puntajes</button>
+    </div>
+
+    <!-- PANTALLA DE PUNTAJES -->
+    <div id="scores" class="hidden">
+        <h2>Mejores Puntajes</h2>
+        <ul id="scoreList"></ul>
+        <button id="backToMenu">Volver</button>
+    </div>
+
+    <!-- JUEGO -->
+    <div id="gameContainer" class="hidden">
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+    <div id="hud">
+        <span id="levelDisplay"></span>
+        <div id="heartsContainer"></div>
+    </div>
+
+    <!-- PANTALLA DE TRANSICIÓN -->
+    
+
+    <div id="gameControls">
+        <button id="pauseBtn">Pausar</button>
+        <button id="resumeBtn" class="hidden">Reanudar</button>
+        <button id="menuBtn">Volver al Inicio</button>
+    </div>
+</div>
+<div id="levelTransition" class="hidden">
+        <h1 id="transitionText"></h1>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

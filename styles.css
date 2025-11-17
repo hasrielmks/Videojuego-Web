@@ -1,0 +1,59 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#menu, #scores, #gameContainer {
+    margin-top: 40px;
+}
+
+#gameCanvas {
+    border: 3px solid white;
+    background: #000;
+}
+
+/* HUD */
+#hud {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-size: 22px;
+    color: white;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#gameControls {
+    margin-top: 10px;
+}
+#levelTransition {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#levelTransition h1 {
+    font-size: 60px;
+}
