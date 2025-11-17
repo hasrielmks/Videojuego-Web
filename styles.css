@@ -18,6 +18,35 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+/* Fondo global para todas las pantallas */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('assets/images/aesthetic_background.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Capa de superposición para mejor legibilidad */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
 }
 
 /* Ocultar elementos */
@@ -38,40 +67,6 @@ body {
     justify-content: center;
     animation: fadeIn 0.6s ease-out;
     z-index: 1;
-}
-
-#menu::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('assets/images/aesthetic_background.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.3;
-    z-index: -1;
-}
-
-/* Capa de superposición para mejor legibilidad */
-#menu::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-}
-
-/* Contenido del menú */
-#menu h1, 
-#menu button {
-    position: relative;
-    z-index: 2;
 }
 
 /* ============================
@@ -115,6 +110,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 h1 {
@@ -149,7 +146,7 @@ h2 {
 ============================ */
 #gameCanvas {
     border: 4px solid #fff;
-    background: #000;
+    background: rgba(0, 0, 0, 0.7);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     flex-shrink: 0;
@@ -189,6 +186,13 @@ h2 {
     text-shadow: 0 0 5px rgba(166, 255, 203, 0.7);
 }
 
+#coinsDisplay {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffcc00;
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.7);
+}
+
 #heartsContainer {
     display: flex;
     gap: 5px;
@@ -200,7 +204,7 @@ h2 {
 }
 
 /* ============================
-   BOTONES (GENERALES - MANTIENEN ESTILO ORIGINAL)
+   BOTONES (GENERALES)
 ============================ */
 button {
     padding: 12px 25px;
@@ -233,16 +237,27 @@ button:active {
     flex-direction: column;
     gap: 10px;
     margin-top: 15px;
+    width: 100%;
 }
 
 /* ============================
    PANTALLA DE PUNTAJES
 ============================ */
+#scores {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 #scoreList {
     list-style: none;
     padding: 0;
     width: 100%;
-    max-width: 300px;
+    max-width: 500px;
+    margin-bottom: 20px;
 }
 
 #scoreList li {
@@ -251,6 +266,21 @@ button:active {
     padding: 10px;
     border-radius: 5px;
     font-size: 1.2rem;
+}
+
+/* Contenedor para botones de puntuaciones */
+#scoresButtons {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    max-width: 500px;
+    justify-content: center;
+}
+
+#scoresButtons button {
+    width: auto;
+    min-width: 180px;
+    flex: 1;
 }
 
 /* ============================
@@ -308,6 +338,17 @@ button:active {
     /* Ajuste de botones del menú en móviles */
     #menu button {
         min-width: 180px;
+        max-width: 250px;
+    }
+    
+    /* Ajuste para botones de puntuaciones en móviles */
+    #scoresButtons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #scoresButtons button {
+        width: 100%;
         max-width: 250px;
     }
 }
