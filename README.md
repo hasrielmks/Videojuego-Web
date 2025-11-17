@@ -1,117 +1,90 @@
-# Videojuego-Web
-🐷 PIG DASH 
+# 🐷 PIG DASH
 
-PIG DASH es un juego web interactivo desarrollado con HTML5, CSS3 y JavaScript vanilla donde controlas a un cerdito que debe recolectar monedas mientras evita ser capturado por un enemigo. El juego cuenta con múltiples niveles de dificultad progresiva y sistema de puntuaciones.
+**PIG DASH** es un emocionante juego web desarrollado con tecnologías nativas (HTML5, CSS3 y JavaScript) donde tomas el control de un adorable cerdito que debe recolectar monedas mientras esquiva a un perseguidor implacable. Con múltiples niveles de dificultad progresiva y un sistema de puntuación competitivo, ¡demuestra tus habilidades y alcanza el primer lugar en el ranking!
 
-🎯 Objetivo del Juego
-Recolectar todas las monedas amarillas en cada nivel
+## 🎯 Objetivo del Juego
 
-Esquivar al enemigo rojo que te persigue
+- **🎯 Recolectar monedas**: Recoge todas las monedas amarillas en cada nivel
+- **🏃‍♂️ Esquivar enemigos**: Evita ser capturado por el enemigo rojo que te persigue
+- **📈 Subir de nivel**: Completa fases para avanzar a niveles más desafiantes
+- **❤️ Conservar vidas**: Mantén tus 3 vidas iniciales el mayor tiempo posible
+- **🏆 Alcanzar high score**: Consigue la mayor puntuación y entra en el ranking
 
-Avanzar de nivel completando cada fase
+## 🕹️ Controles
 
-Conservar tus vidas (representadas por corazones ❤️)
+| Tecla | Acción |
+|-------|--------|
+| **↑** | Mover hacia arriba |
+| **↓** | Mover hacia abajo |
+| **←** | Mover hacia izquierda |
+| **→** | Mover hacia derecha |
 
-Alcanzar el mayor puntaje posible
+## 🏆 Sistema de Puntuación
 
-🕹️ Controles
-Flecha Arriba (↑): Mover hacia arriba
+| Elemento | Puntos/Efecto |
+|----------|---------------|
+| **Moneda recolectada** | +1 punto |
+| **Vidas iniciales** | 3 corazones ❤️ |
+| **Colisión con enemigo** | -1 vida |
+| **Game Over** | Fin de partida |
+| **Ranking** | Top 10 puntuaciones |
 
-Flecha Abajo (↓): Mover hacia abajo
+## 📈 Sistema de Niveles
 
-Flecha Izquierda (←): Mover hacia izquierda
+| Nivel | Monedas | Dificultad |
+|-------|---------|------------|
+| **1** | 10 | Velocidad base |
+| **2+** | +5 por nivel | Velocidad incremental |
+| **Progresivo** | Más obstáculos | IA más inteligente |
 
-Flecha Derecha (→): Mover hacia derecha
+## 🎨 Características Técnicas
 
-🏆 Sistema de Puntuación
-+1 punto por cada moneda recolectada
+### 🛠️ Tecnologías Utilizadas
+- **HTML5 Canvas** - Renderizado del juego
+- **CSS3** - Estilos y animaciones
+- **JavaScript ES6** - Lógica del juego
+- **LocalStorage** - Persistencia de datos
 
-3 vidas iniciales por partida
+### ✨ Elementos Visuales
+- **Fondo estético** en menú principal
+- **Interfaz moderna** con efectos visuales
+- **Panel informativo** en tiempo real
+- **Animaciones fluidas** entre pantallas
+- **Diseño responsive** para todos los dispositivos
 
-Pérdida de vida al ser capturado por el enemigo
+## 🚀 Funcionalidades Principales
 
-Game Over al perder todas las vidas
+### 📋 Menús y Navegación
+- 🏠 Menú principal con imagen de fondo
+- 📊 Pantalla de mejores puntuaciones
+- 🔄 Transiciones animadas entre niveles
+- ⏸️ Sistema de pausa/reanudación
 
-Ranking de mejores puntuaciones guardado localmente
+### 🎮 Mecánicas de Juego
+- 🔄 Movimiento fluido del personaje
+- 🧠 IA de persecución del enemigo
+- 💥 Detección precisa de colisiones
+- 🎲 Generación procedural de niveles
 
-📈 Niveles y Dificultad
-Nivel 1: 10 monedas, velocidad base
+### 💾 Gestión de Estado
+- ❤️ Control de vidas y nivel actual
+- 💾 Sistema de guardado automático
+- 🔄 Reinicio inteligente entre niveles
+- 📱 Persistencia entre sesiones
 
-Niveles progresivos: +5 monedas por nivel
+## 🎯 Estrategias para Ganar
 
-Aumento de velocidad del enemigo en cada nivel
+1. **🗺️ Planificación de rutas** - Optimiza tu camino para recolectar monedas
+2. **🛡️ Uso de obstáculos** - Aprovecha las paredes como protección
+3. **📏 Control de distancia** - Mantén espacio seguro con el enemigo
+4. **⏱️ Gestión del tiempo** - Equilibra velocidad y precaución
+5. **🎮 Patrones de movimiento** - Estudia el comportamiento del perseguidor
 
-Generación aleatoria de paredes obstáculo
+## 🔧 Personalización y Configuración
 
-Dificultad incremental con cada nivel completado
-
-🎨 Características Técnicas
-Tecnologías Utilizadas
-HTML5 Canvas para el renderizado del juego
-
-CSS3 con gradientes y efectos visuales
-
-JavaScript ES6 para la lógica del juego
-
-LocalStorage para persistencia de puntuaciones
-
-Elementos Visuales
-Fondo estético con imagen en el menú principal
-
-Interfaz moderna con efectos de hover y transiciones
-
-Panel lateral con información del juego en tiempo real
-
-Animaciones suaves y transiciones entre pantallas
-
-Diseño responsive para diferentes dispositivos
-
-🚀 Funcionalidades Principales
-Menús y Navegación
-Menú principal con fondo estético
-
-Pantalla de mejores puntuaciones
-
-Transiciones entre niveles
-
-Sistema de pausa y reanudación
-
-Mecánicas de Juego
-Movimiento fluido del personaje principal
-
-IA de persecución del enemigo
-
-Detección de colisiones con paredes y objetos
-
-Generación procedural de niveles
-
-Gestión de Estado
-Control de vidas y nivel actual
-
-Sistema de guardado de progreso
-
-Reinicio automático al cambiar de nivel
-
-Persistencia de datos entre sesiones
-
-🎯 Estrategias de Juego
-Planifica tu ruta para recolectar monedas eficientemente
-
-Mantén distancia del enemigo rojo
-
-Usa las paredes como barreras de protección
-
-Prioriza la supervivencia sobre la velocidad
-
-Aprovecha los patrones de movimiento del enemigo
-
-🔧 Personalización
 El juego permite fácil personalización mediante:
 
-Ajuste de velocidades en el código
-
-Modificación del número de monedas por nivel
-
-Cambio de colores y estilos en CSS
-
-Adaptación de dificultad progresiva
+- **⚙️ Ajuste de velocidades** en el código JavaScript
+- **🔄 Modificación de monedas** por nivel
+- **🎨 Cambio de paleta de colores** en CSS
+- **📏 Adaptación de dificultad** progresiva
