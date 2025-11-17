@@ -3,6 +3,7 @@
 // ============================
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+const coinSound = new Audio("sounds/coin.wav"); // ruta a tu sonido
 
 let gameRunning = false;
 let paused = false;
@@ -62,6 +63,16 @@ function goToMenu() {
     scoresMenu.classList.add("hidden");
     gameContainer.classList.add("hidden");
 }
+const clearScoresBtn = document.getElementById("clearScoresBtn");
+clearScoresBtn.onclick = clearScores;
+
+function clearScores() {
+    if (confirm("¿Seguro que deseas borrar todos los puntajes?")) {
+        localStorage.removeItem("pigScores"); // Borra los puntajes
+        scoreList.innerHTML = ""; // Limpia la lista en pantalla
+        alert("Todos los puntajes han sido borrados.");
+    }
+}
 
 function showScores() {
     menu.classList.add("hidden");
@@ -70,12 +81,24 @@ function showScores() {
     scoreList.innerHTML = "";
     let scores = JSON.parse(localStorage.getItem("pigScores") || "[]");
 
-    scores.slice(0, 10).forEach(s => {
+    // Ordenar de mayor a menor
+    scores.sort((a, b) => b.points - a.points);
+
+    // Mostrar top 10
+    scores.slice(0, 10).forEach((s, index) => {
         const li = document.createElement("li");
-        li.textContent = `${s.name}: ${s.points}`;
+
+        // Corregimos undefined usando valores por defecto
+        const name = s.name || "Jugador";
+        const points = s.points || 0;
+        const level = s.level || 1;
+
+        li.innerHTML = `<strong>${index + 1}.</strong> ${name} - Puntos: ${points} - Nivel: ${level}`;
         scoreList.appendChild(li);
     });
 }
+
+
 
 // ============================
 // HUD
@@ -106,6 +129,9 @@ function startGame() {
     resetGame();
     gameRunning = true;
 
+    // Reproducir música
+    bgMusic.play().catch(e => console.log("Música no se pudo reproducir automáticamente"));
+
     gameLoop();
 }
 
@@ -132,17 +158,32 @@ function loadLevel(level) {
     walls = [];
     coins = [];
 
-    // Monedas
     let coinCount = 10 + (level - 1) * 5;
-    for (let i = 0; i < coinCount; i++) {
-        coins.push({
-            x: Math.floor(Math.random() * 29) * 20,
-            y: Math.floor(Math.random() * 29) * 20,
-            size: 20
-        });
-    }
 
-    // Aumentar dificultad
+    for (let i = 0; i < coinCount; i++) {
+        let coin;
+        let validPosition = false;
+
+        while (!validPosition) {
+            coin = {
+                x: Math.floor(Math.random() * 29) * 20,
+                y: Math.floor(Math.random() * 29) * 20,
+                size: 20
+            };
+
+            // Verificar que no choque con monedas existentes
+            validPosition = !coins.some(c => 
+                Math.abs(c.x - coin.x) < coin.size && Math.abs(c.y - coin.y) < coin.size
+            );
+
+            // Opcional: también puedes verificar que no choque con el cerdito
+            validPosition = validPosition &&
+                            !(Math.abs(pig.x - coin.x) < coin.size && Math.abs(pig.y - coin.y) < coin.size);
+        }
+
+        coins.push(coin);
+    }
+ // Aumentar dificultad
     enemy.speed = 2 + (level - 1) * 0.4;
     pig.speed = 4 + (level - 1) * 0.2;
 
@@ -159,6 +200,11 @@ function loadLevel(level) {
 
     updateHUD();
 }
+
+// Música de fondo
+const bgMusic = new Audio('sounds/bgm.mp3');
+bgMusic.loop = true;  // Se repetirá infinitamente
+bgMusic.volume = 0.3; // Ajusta el volumen (0 a 1)
 
 // ============================
 // GAME LOOP
@@ -231,14 +277,22 @@ function checkCoinCollision() {
     coins = coins.filter(coin => {
         if (Math.abs(pig.x - coin.x) < 20 && Math.abs(pig.y - coin.y) < 20) {
             score++;
+            coinSound.currentTime = 0; // reinicia el sonido si se repite rápido
+            coinSound.play();
             return false;
         }
         return true;
     });
 }
 
+
+
 function checkEnemyCollision() {
     if (Math.abs(pig.x - enemy.x) < 20 && Math.abs(pig.y - enemy.y) < 20) {
+
+        // Reproducir sonido
+        const hitSound = new Audio('sounds/hit.wav');
+        hitSound.play();
 
         lives--;
         updateHUD();
@@ -259,6 +313,7 @@ function checkEnemyCollision() {
         alert("¡Te atraparon! Vidas restantes: " + lives);
     }
 }
+
 
 function checkWallCollision(obj) {
     for (let w of walls) {
@@ -283,11 +338,24 @@ function saveScore() {
     let name = prompt("Ingresa tu nombre:");
     if (!name) name = "Jugador";
 
-    scores.push({ name, points: score });
+    // Guardamos puntos y nivel
+    const newScore = { name, points: score, level: currentLevel };
+    scores.push(newScore);
 
+    // Ordenar de mayor a menor
     scores.sort((a, b) => b.points - a.points);
+
+    // Comprobar si es un nuevo récord
+    let isNewRecord = scores[0] === newScore;
+
     localStorage.setItem("pigScores", JSON.stringify(scores));
+
+    // Mostrar mensaje si hay nuevo récord
+    if (isNewRecord) {
+        alert("¡NUEVO RECORD! " + score + " puntos");
+    }
 }
+
 
 // ============================
 // DIBUJAR TODO
@@ -319,12 +387,15 @@ function pauseGame() {
     paused = true;
     pauseBtn.classList.add("hidden");
     resumeBtn.classList.remove("hidden");
+    bgMusic.pause(); // Pausar música
 }
+
 
 function resumeGame() {
     paused = false;
     resumeBtn.classList.add("hidden");
     pauseBtn.classList.remove("hidden");
+    bgMusic.play(); // Reanudar música
 }
 
 // ============================
